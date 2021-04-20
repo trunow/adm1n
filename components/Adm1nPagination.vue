@@ -49,7 +49,7 @@ export default {
 
       let links = [];
 
-      if(this.hasMeta && this.meta.links?.length) {
+      if(this.hasMeta && this.meta.links && this.meta.links.length) {
         
         //this.meta.links.slice(1);
         links = this.meta.links.map(l => {

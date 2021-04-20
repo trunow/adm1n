@@ -62,7 +62,7 @@ function http(url, options = {}) {
     if (options.method) {
         _params.method = _checkMethod(options.method, _replaceMethods(options.methods), _get);
     }
-    if (options?.json) {
+    if (options.json) {
         if (!options.headers) options.headers = {};
         options.headers["Accept"] = "application/json";
     }
@@ -89,7 +89,7 @@ function http(url, options = {}) {
         url = options.base + url;
     }
 
-    _params.body = options?.body;
+    _params.body = options.body;
 
     if (_params.body) {
         // if (_params.body instanceof FormData) {
@@ -110,27 +110,27 @@ function http(url, options = {}) {
         delete _params.body; // TODO queryString ??
     }
 
-    if (!Array.isArray(options?.oks)) {
+    if (!Array.isArray(options.oks)) {
         options.oks = [200];
     }
-    if (!Array.isArray(options?.errs)) {
+    if (!Array.isArray(options.errs)) {
         options.errs = [422];
     }
-    // if (options?.oks && Array.isArray(options.oks)) {
+    // if (options.oks && Array.isArray(options.oks)) {
     //     // options.oks = options.oks; //TODO [].includes
     // }
     // else {
     //     options.oks = [200];
     // }
-    // if (options?.errs && Array.isArray(options.errs)) {
+    // if (options.errs && Array.isArray(options.errs)) {
     //     // options.errs = options.errs; //TODO [].includes
     // }
     // else {
     //     options.errs = [422];
     // }
 
-    if (typeof options?.before === "function") {
-        options.before(options?.beforeData);
+    if (typeof options.before === "function") {
+        options.before(options.beforeData);
     }
 
     // let isOk = false,
@@ -145,21 +145,21 @@ function http(url, options = {}) {
                 // if (r.status === 422) responseError = r.status;
                 if (r.status > 399) responseError = r.status;
 
-                return options?.json ? r.json() : r;
+                return options.json ? r.json() : r;
             })
             .then(d => {
                 
                 if (responseError) {
 
-                    if (options?.validate && d?.errors) { // && responseError === 422
-                        let _validator = (typeof options?.validator === "function") ? options.validator : validator;
+                    if (options.validate && d.errors) { // && responseError === 422
+                        let _validator = (typeof options.validator === "function") ? options.validator : validator;
                         _validator(d.errors, options.validate);
                     }
 
                     throw new Error(d.message || HTTPStatuses[responseError] || responseError); //|| "Form error");
                 }
 
-                // if (options?.check) {
+                // if (options.check) {
                 //     let $check = get(options.check, d);
                 //     if ($check === undefined) {
                 //         let message = `Not found ${options.check}`;
@@ -170,7 +170,7 @@ function http(url, options = {}) {
                 //     return d; // $check // $get
                 // }
 
-                // if (options?.get) {
+                // if (options.get) {
                 //     // TODO if array
                 //     let $get = get(options.check, d);
                 //     if ($get === undefined) {
@@ -182,7 +182,7 @@ function http(url, options = {}) {
                 //     return $get;
                 // }
 
-                if (typeof options?.success === "function") {
+                if (typeof options.success === "function") {
                     return options.success(d);
                 }
 
@@ -195,7 +195,7 @@ function http(url, options = {}) {
                 responseError = false;
                 // isOk = false;
                 
-                if (typeof options?.anyway === "function") {
+                if (typeof options.anyway === "function") {
                     options.anyway(x);
                 }
                 
@@ -203,7 +203,7 @@ function http(url, options = {}) {
             .catch(e => {
                 console.error("catch in $http", e);
                 
-                if (typeof options?.fail === "function") {
+                if (typeof options.fail === "function") {
                     options.fail(e);
                 } else {
                     alert(e.message || "Unknown_error"); // TODO Errorer // notify
