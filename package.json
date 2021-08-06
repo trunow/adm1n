@@ -1,6 +1,6 @@
 {
     "name": "adm1n",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "scripts": {
         "test": "echo 'adm1n'",
         "u": "rm -rf node_modules && npm i"
