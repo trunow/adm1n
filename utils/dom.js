@@ -12,7 +12,7 @@ $._.push = function(tag){let el=$.create(tag);this.appendChild(el);return el;}
 $._.text = function(txt){if(!txt) return this.innerText;this.innerText=txt;return this;} // TODO textContent
 $._.html = function(html){if(!html) return this.innerHTML;this.innerHTML=html;return this;}
 $._.css = function (css) { if (!css) return this.style.cssText; this.style.cssText = css; return this; }
-$.meta = (n) => $(`meta[name="${n}"]`)?.content;
+$.meta = (n) => ($('meta[name="' + n + '"') || {}).content;//(n) => $(`meta[name="${n}"]`)?.content;//?
 
 window.$ = $;
 
