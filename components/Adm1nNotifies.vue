@@ -1,60 +1,50 @@
 <template>
     <teleport :to="'body'">
-        <div class="adm1n-notifies" v-show="notifies.length">
-            <transition-group name="list" tag="div" class="xxxxx">
-                <div v-for="(n,i) in notifies" 
-                    class="adm1n-notify"
-                    :class="[{'adm1n-notify_nobody': !n.body, 'adm1n-notify_icon': !n.icon}, n.class]" 
-                    :style="[{order: 1}, n.style]"
-                    :key="'notify_' + i" 
+        <div class="adm1n-notifies" v-if="notifies.length">
+            <transition-group name="list" tag="div" class="adm1n-notifies-notify">
+                <adm1n-notify v-for="notice in notifies" 
+                              :notice="notice" 
+                              :key="notice" 
+                              @close="close" 
+                              style="position:relative;"
                 >
-                    <div v-if="n.icon" class="adm1n-notify-icon">
-                    [{{ n.icon }}]
-                    </div>
-                    <div class="adm1n-notify-text">
-                    <h3 class="adm1n-notify-title">
-                        {{ n.title }}
-                    </h3>
-                    <p v-if="n.body" class="adm1n-notify-body">
-                        {{ n.body }}
-                    </p>
-                    </div>
-                    <div v-if="!n.forever" class="adm1n-notify-closer" @click="close(i)"></div>
-                </div>
+                </adm1n-notify>
             </transition-group>
         </div>
     </teleport>
 </template>
 
 <script>
+import Adm1nNotify from './Adm1nNotify.vue';
+
 export default {
     name: 'adm1n-notifies',
 
     data() {
         return {
-            notifies: [
-                {title: "title1", body: "body1", icon: "", class: "", style: "", iconAs: false},
-                {title: "title2", body: "body2", icon: "", class: "", style: {"alignSelf":"center"}, iconAs: false},
-                {title: "title3", body: "body2", icon: "", class: "", style: "", iconAs: false},
-                {title: "title4", body: "body2", icon: "", class: "", style: "", iconAs: false},
-                {title: "title5", body: "body2", icon: "", class: "", style: "", iconAs: false},
-                {title: "title6", body: "body2", icon: "", class: "", style: "", iconAs: false},
-                {title: "long-title7", body: "body2", icon: "", class: "", style: "", iconAs: false},
-                {title: "long-long-looong-loooooong-title8", body: "body2", icon: "", class: "", style: "", iconAs: false},
-                {title: "title2", body: "body2", icon: "", class: "", style: "", iconAs: false},
-                {title: "title2", body: "body2", icon: "", class: "", style: "", iconAs: false},
-                {title: "title2", body: "body2", icon: "", class: "", style: "", iconAs: false},
-                {title: "title2", body: "body2", icon: "", class: "", style: "", iconAs: false},
-                {title: "title2", body: "body2", icon: "", class: "", style: "", iconAs: false},
-            ]
+            notifies: [],
         }
     },
 
+    components: {
+        Adm1nNotify
+    },
+
     methods: {
-        close(x) {
+        push(notice) {
+            this.notifies.push(notice);
+        },
+
+        close(c) {
+            let x = this.notifies.findIndex(n => c === n);
             this.notifies.splice(x, 1);
         }
-    }	
+    },
+
+    created() {
+        // sub
+        this.$bus.on("notify", this.push);
+    },
 }
 </script>
 
@@ -62,53 +52,39 @@ export default {
 .adm1n-notifies {
     position: fixed;
     top: 0;
-    left: 0;
-    width: 100vw;
-    min-height: 100vh;
-    background-color: #0003;
+    right: 0;
+    z-index: 9990;
 }
-.adm1n-notifies > div {
+.adm1n-notifies > .adm1n-notifies-notify {
     position: relative;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
     align-items: flex-end;
-    width: 100%;
-    height: 100%;
 }
-.adm1n-notifies .adm1n-notify {
-    background-color: lightblue;
-    padding: 1rem;
-    margin: 1rem;
-    box-shadow: 0 0 4px #cccc;
-    background-color: lightblue;
-    position: relative;
-    flex: 0 1 auto;
-    display: inline-flex;
-    /* width: 30%; */
-    order: 1;
-    min-width: 120px;
+
+.list-enter-active {
+    opacity: 0;
 }
-/* .adm1n-notify {} */
-.adm1n-notify-closer {
-    position: absolute;
-    top: .5rem;
-    right: .5rem;
-}
-.adm1n-notify-closer::after {
-    content: "×"
-}
-/* .adm1n-notify.adm1n-notify_left {
-  
-} */
-.list-enter-active,
 .list-leave-active {
-  transition: all 1s ease;
+    transition: all 0.5s;
 }
-.list-enter-from,
+.list-enter-to {
+    animation: itemEnter 0.8s;
+}
 .list-leave-to {
-  opacity: 0;
-  transform: translateX(150%);
-  /* height: 0; */
+    opacity: 0;
+    transform: translateX(150%);
+}
+
+@keyframes itemEnter {
+    from {
+        opacity: 0;
+        transform: translateX(150%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 </style>

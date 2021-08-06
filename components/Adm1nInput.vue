@@ -45,7 +45,7 @@
 
         name: "adm1n-input",
 
-        debug: true,
+        // debug: true,
 
         props: {
             value: {
@@ -254,7 +254,8 @@
 }
 .adm1n-control-input {
     font-size: var(--font-size);
-    line-height: var(--line-height);
+    line-height: 1;
+    /* line-height: var(--line-height); */
 }
 .adm1n-control-input[type='text'],
 .adm1n-control-input[type='password'],
@@ -285,9 +286,14 @@
     flex-direction: row;
     align-items: flex-end;
 }
+.adm1n-control__check .adm1n-control-input {
+    align-self: baseline;
+}
 .adm1n-control__check .adm1n-control-label {
     margin-bottom: 0;
-    line-height: 1;
+    line-height: inherit;
+    font-size: 1em;
+    text-indent: 0.5rem;
 }
 .adm1n-control__btn {
     flex-direction: initial;

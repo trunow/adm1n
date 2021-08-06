@@ -1,5 +1,5 @@
 <template>
-    <form class="adm1n-form" :class="{'adm1n-form__inline': inline}" @input="formChange" @submit="formSubmit">
+    <form class="adm1n-form" :class="{'adm1n-form__inline': inline}" @input="$emit('change')" @submit="formSubmit">
         <template v-for="(c, _i) in controls" :key="'control_' + _i">
             <component :is="groupComponent(c.group)" :class="{'adm1n-form-fieldset': c.group, 'adm1n-form-control': !c.group}">
                 <!-- TODO legend -->
@@ -26,8 +26,9 @@
                                 :inline="inline"
                                 :dataError="f.dataError"
                                 :value="f.value"
-                                @input="onInput"
-                                @focus="onFocus"
+                                @input="$emit('input')"
+                                @focus="$emit('focus')"
+                                @blur="$emit('blur')"
                     >
                     </adm1n-input>
                 </template>
@@ -89,9 +90,6 @@
                     }
 
                 });
-
-                // TODO @DEV
-                // console.warn("prepareFields / controls:", this.controls);
             },
 
             groupComponent(isGroup) {
@@ -106,68 +104,30 @@
                 return f instanceof Array;
             },
 
-            onInput(e) {
-                // TODO @DEV
-                console.log('onInput in ' + this.$options.name + ' > ' + e.target.name + ': ' + e.target.value + ' (' + typeof e.target.value + ')');
-
-                // let _f = this.fields.find(f => f.name === e.target.name)
-                // // if(_f) _f.value = e.target.value; 
-                // console.warn('find field', _f);
-
-                // this.$emit('input', e);
-
-            },
-
-            onFocus(e) {
-                // TODO @DEV
-                console.log('onFocus in ' + this.$options.name + ' > ' + e.target.name + ': ' + e.target.value + ' (' + typeof e.target.value + ')');
-
-                // let _f = this.fields.find(f => f.name === e.target.name)
-                // // if(_f) _f.value = e.target.value; 
-                // console.warn('find field', _f);
-
-                // this.$emit('input', e);
-
-            },
-
-            formChange(e) {
-                // TODO @DEV
-                console.warn('formChange!!!!!!!!!', e);
-                //this.$emit
-            },
-
             formSubmit(e) {
 
                 e.preventDefault();
 
                 // TODO validator
-                let formData = new FormData(e.target);// TODO helper Submitter // TODO optional ifChanged
+                // let formData = new FormData(e.target);// TODO helper Submitter // TODO optional ifChanged
 
-                for(let [name, value] of formData) {
+                // for(let [name, value] of formData) {
+                //     let cntr = this.controls.find(f=>f.name===name);
+                //     if(cntr) {
+                //         //cntr.value = value;
+                //         if(cntr.isCheck && cntr.group) {
+                //             // TODO @DEV
+                //             console.warn('isCheck && group !!! [' + name + '] find in this.controls', cntr, name, value);
+                //         }
+                //     }
+                // }
+                // this.$emit('submit', e, formData);
 
-                    let cntr = this.controls.find(f=>f.name===name);
-
-                    if(cntr) {
-                        //cntr.value = value;
-
-                        // TODO @DEV
-                        // console.log('... [' + name + '] find in this.controls', cntr, name, value);
-                        if(cntr.isCheck && cntr.group) {
-                            // TODO @DEV
-                            console.warn('isCheck && group !!! [' + name + '] find in this.controls', cntr, name, value);
-                        }
-                    }
-                }
-
-                // TODO @DEV
-                // console.warn('formSubmit in ' + this.$options.name);
-                // console.warn('formSubmit in ' + this.$options.name, e, e.target, this.fields, formData);
-
-                // this.$emit('submit', formData);
+                this.$emit('submit', e);
             }
         },
 
-        // emits: ['input', 'focus', 'blur', 'submit'],
+        emits: ['change', 'input', 'focus', 'blur', 'submit'],
 
         mounted() {
             this.prepareFields(this.fields);

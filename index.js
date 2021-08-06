@@ -5,8 +5,10 @@ import _ from './utils'; // типа lodash
 import $ from './utils/dom'; // типа jQ
 import bus from "./utils/bus";
 import http from "./utils/http"; // типа axios
+import notice from "./utils/notice"; // форматирует сообщение в объект для $notify
+import { noticeOptions } from "./utils/notice"; // нужны для сахара, типа $notify.danger()
 
-import Adm1nNotify from "./components/Adm1nNotify.vue";
+import Adm1nNotifies from "./components/Adm1nNotifies.vue";
 
 import { createApp } from "vue";
         
@@ -26,7 +28,8 @@ const adm1n = {
 
 
         app.config.globalProperties.$http = http; // TODO ? что делать с catch ?
-        app.config.globalProperties.$api = http; // TODO ? что делать с catch ?
+        //alias ??
+        app.config.globalProperties.$api = http; // TODO ?
         // app.config.globalProperties.$api = http.use({baseUrl: '', options: {}});
 
         // app.provide('i18n', options.i18n)
@@ -47,24 +50,30 @@ const adm1n = {
         if (options && options.i18n) app.config.globalProperties.$i18n(options.i18n);
         
 
-        app.component("adm1n-notify", Adm1nNotify);
+        // app.component("adm1n-notifies", Adm1nNotifies);
 
         const anEl = document.createElement("div");
         document.body.appendChild(anEl);
-        const anApp = createApp(Adm1nNotify);
+        const anApp = createApp(Adm1nNotifies);
         // anApp.use(busPlugin); // adm1n/plugins/bus ???
         anApp.config.globalProperties.$bus = bus;
         anApp.mount(anEl);
 
-        // console.warn(nbox, Adm1nNotify);
-
-        app.config.globalProperties.$notify = function(message) {
-            console.warn(message, this.$bus);
-            bus.emit("message", message);
+        const $notify = function(options = null, level = null) {
+            let ntc = new notice(options, level);
+            if (ntc) bus.emit("notify", ntc);
         };
+        noticeOptions.levels.forEach((l) => {
+            $notify[l] = function(options = null) {
+                return $notify.call(this, options, l);
+            };
+        });
+
+        app.config.globalProperties.$notify = $notify;
 
         app.mixin({
             created() {
+                // TODO @DEV
                 if (this.$options.name && this.$options.debug) {
                     console.log(this.$options.name + " / " + __ts);
                 }
