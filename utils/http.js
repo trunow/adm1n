@@ -80,12 +80,13 @@ function http(url, options = {}) {
 
     if (options.base && typeof options.base === "string") {
         options.base = options.base.trim();
-        if (
-            url.length &&
-            options.base.length &&
-            options.base[options.base.length - 1] === "/"
-        )
-            options.base = options.base.slice(1);
+
+        if (url.slice(0, 4) !== "http") options.base = "";
+        else {
+            if (options.base.slice(-1) === "/") options.base = options.base.slice(0, -1);
+            if (url.slice(0, 1) !== "/") url = "/" + url;
+        }
+
         url = options.base + url;
     }
 
